@@ -1,0 +1,14 @@
+@CHARSET "UTF-8";
+html {
+    border: 0 none;
+    height: 100%;
+    overflow: auto;
+}
+body {
+    border: 0 none;
+    height: 100%;
+    line-height: 1;
+}
+.searchBox{
+	margin: 10px 0 10px 10px;
+}

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- beans 的约束 -->
+<beans 
+	xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans 
+   	   http://www.springframework.org/schema/beans/spring-beans.xsd
+ 	   http://www.springframework.org/schema/context
+ 	   http://www.springframework.org/schema/context/spring-context.xsd
+ 	   http://www.springframework.org/schema/aop
+ 	   http://www.springframework.org/schema/aop/spring-aop.xsd
+ 	   http://www.springframework.org/schema/tx
+	   http://www.springframework.org/schema/tx/spring-tx.xsd
+	   http://www.springframework.org/schema/data/jpa
+	   http://www.springframework.org/schema/data/jpa/spring-jpa.xsd"> 
+
+    <!-- 加载 jdbc.properties 文件 -->
+    <context:property-placeholder location="classpath:jdbc.properties" />
+	
+	<!-- 创建 c3p0 连接池 -->
+	<!-- 加载资源文件中的配置 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" 
+		destroy-method="close">
+		<property name="jdbcUrl" value="${jdbc.url}" />
+		<property name="driverClass" value="${jdbc.driverClass}" />
+		<property name="user" value="${jdbc.user}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+	
+	<!-- Spring 整合  JPA 配置 -->
+	<!-- 配置  EntityManagerFactory -->
+	<bean id="entityManagerFactory" 
+		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<!-- JPA 底层封装了  Hibernate，依赖  Hibernate -->
+		<property name="jpaVendorAdapter">
+		<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+				<!-- hibernate 属性 -->
+				<!-- 数据库 -->
+				<property name="database" value="MYSQL" />
+				<!-- 自动建表 -->
+				<property name="generateDdl" value="true" />
+				<!-- 显示 SQL -->
+				<property name="showSql" value="true" />
+			</bean>
+		</property>
+		<property name="packagesToScan">
+			<!-- 扫描实体所在的包 -->
+			<list>
+				<value>com.mapeak.ecshop.domain</value>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 事务管理器 -->
+	<!-- 使用注解的方式使用事务 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	<bean id="transactionManager" 
+		class="org.springframework.orm.jpa.JpaTransactionManager">
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
+	</bean>
+	
+	<!-- 开启事务注解 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	
+	<!-- 开启 Spring IOC注解功能 -->
+	<!-- base-package：IOC 注解的类所在包，即包的范围，Spring 也会扫描该包的子包 -->
+	<context:component-scan base-package="com.mapeak.ecshop" />
+	
+	<!-- spring data jpa 扫描包 -->
+	<jpa:repositories base-package="com.mapeak.ecshop.dao" />
+	
+
+</beans>

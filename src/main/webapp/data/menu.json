@@ -1,0 +1,4 @@
+[
+		{ "id":"14", "pId":"0", "name":"商品信息管理","open":true },
+		{ "id":"141", "pId":"14", "name":"商品管理","pageUrl":"pages/product.jsp"}
+]
